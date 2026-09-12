@@ -1,15 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isSupabaseConfigured } from "./config";
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   // ponytail: lets `npm run dev` run before a Supabase project exists; once
   // NEXT_PUBLIC_SUPABASE_URL/ANON_KEY are set in .env.local, this always runs.
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
+  if (!isSupabaseConfigured) {
     return response;
   }
 
