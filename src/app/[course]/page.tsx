@@ -46,54 +46,67 @@ export default async function CoursePage({
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-16">
-      <h1 lang="mr" className="text-3xl font-semibold">
-        {course.title}
-      </h1>
-      {course.description && (
-        <p lang="mr" className="mt-3 text-zinc-600 dark:text-zinc-400">
-          {course.description}
-        </p>
-      )}
-
-      <div className="mt-6">
-        {!user && (
-          <Link
-            href={`/login?next=${encodeURIComponent(`/${slug}`)}`}
-            className="inline-block rounded bg-foreground px-4 py-2 text-sm font-medium text-background"
-          >
-            Sign in to enroll
+    <main>
+      <section className="bg-[radial-gradient(ellipse_at_top_left,#3a3780_0%,#24224f_60%,#171533_100%)] text-paper">
+        <div className="mx-auto max-w-3xl px-6 py-16 sm:py-20">
+          <Link href="/#courses" className="text-sm text-paper/70 hover:text-paper">
+            ← All courses
           </Link>
+          <p className="mt-8 text-xs uppercase tracking-[0.3em] text-gold">Course</p>
+          <h1 className="mt-3 font-display text-4xl sm:text-5xl">{course.title}</h1>
+          <div className="mt-8">
+            {!user && (
+              <Link href={`/login?next=${encodeURIComponent(`/${slug}`)}`} className="btn btn-primary">
+                Sign in to enroll
+              </Link>
+            )}
+            {user && !enrollment && (
+              <form action={enroll.bind(null, course.id, slug)}>
+                <button type="submit" className="btn btn-primary">
+                  Enroll in this course
+                </button>
+              </form>
+            )}
+            {enrollment && (
+              <p className="inline-block rounded-full border border-gold/60 px-4 py-1.5 text-sm capitalize text-gold">
+                Enrolled · {enrollment.status}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-3xl px-6 py-14">
+        {course.description && (
+          <div className="space-y-5 text-lg leading-8 text-ink/85">
+            {course.description.split(/\n\n+/).map((paragraph, i) => (
+              <p key={i}>{paragraph}</p>
+            ))}
+          </div>
         )}
-        {user && !enrollment && (
-          <form action={enroll.bind(null, course.id, slug)}>
-            <button
-              type="submit"
-              className="rounded bg-foreground px-4 py-2 text-sm font-medium text-background"
-            >
-              Enroll
-            </button>
-          </form>
-        )}
-        {enrollment && (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Enrollment status: {enrollment.status}
-          </p>
+
+        <h2 className="mt-14 font-display text-2xl">Modules</h2>
+        {modules && modules.length > 0 ? (
+          <ol className="mt-5 space-y-3">
+            {modules.map((module, index) => (
+              <li key={module.id}>
+                <Link
+                  href={`/${slug}/module-${index + 1}`}
+                  className="group flex items-center gap-4 rounded-xl border border-line bg-white/60 px-5 py-4 transition hover:border-gold hover:shadow-sm"
+                >
+                  <span className="w-8 font-display text-xl text-gold">{index + 1}</span>
+                  <span className="flex-1">{module.title}</span>
+                  <span className="text-xs uppercase tracking-wider text-muted">
+                    {module.content_type === "video" ? "Video" : "Reading"}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="mt-4 text-sm text-muted">No modules published yet.</p>
         )}
       </div>
-
-      <h2 className="mt-10 text-lg font-medium">Modules</h2>
-      {modules && modules.length > 0 ? (
-        <ol className="mt-4 space-y-2">
-          {modules.map((module, index) => (
-            <li key={module.id} lang="mr" className="text-zinc-700 dark:text-zinc-300">
-              {index + 1}. {module.title}
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p className="mt-4 text-sm text-zinc-500">No modules published yet.</p>
-      )}
     </main>
   );
 }

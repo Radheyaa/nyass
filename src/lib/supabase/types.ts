@@ -10,6 +10,8 @@ export type Module = {
   id: string;
   title: string;
   content_type: "text" | "video";
+  video_url?: string | null;
+  body?: string | null;
   display_order: number;
 };
 

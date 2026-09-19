@@ -8,4 +8,5 @@ insert into courses (slug, title, description, display_order) values
   ('dasbodh', 'Dasbodh', null, 3),
   ('vaidik-gnan', 'Vaidik Knowledge', null, 4),
   ('pravachane', 'Gondavalekar Maharaj Pravachane', null, 5),
-  ('trainer-course', 'Trainer Course', 'Advanced course, unlocked after completing a base course.', 6);
+  ('trainer-course', 'Trainer Course', 'Advanced course, unlocked after completing a base course.', 6)
+on conflict (slug) do nothing;
