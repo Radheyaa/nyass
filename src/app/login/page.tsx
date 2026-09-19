@@ -1,7 +1,5 @@
+import { inputClass as input } from "@/lib/ui";
 import { signIn, signUp, signInWithGoogle } from "./actions";
-
-const input =
-  "w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-sm outline-none focus:border-saffron";
 
 export default async function LoginPage({
   searchParams,

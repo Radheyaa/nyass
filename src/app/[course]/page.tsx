@@ -32,6 +32,7 @@ export default async function CoursePage({
     .select("id, title, content_type, display_order")
     .eq("course_id", course.id)
     .order("display_order")
+    .order("created_at")
     .returns<Module[]>();
 
   let completed = new Set<string>();

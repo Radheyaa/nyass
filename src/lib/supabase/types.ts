@@ -12,6 +12,7 @@ export type Module = {
   content_type: "text" | "video";
   video_url?: string | null;
   body?: string | null;
+  published?: boolean;
   display_order: number;
 };
 

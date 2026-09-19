@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isAuthor } from "@/lib/auth";
 import { signOut } from "@/app/login/actions";
 
 export default async function Header() {
   let userEmail: string | null = null;
+  let author = false;
 
   if (isSupabaseConfigured) {
     const supabase = await createClient();
@@ -12,6 +14,7 @@ export default async function Header() {
       data: { user },
     } = await supabase.auth.getUser();
     userEmail = user?.email ?? null;
+    if (user) author = await isAuthor(supabase, user.id);
   }
 
   return (
@@ -41,6 +44,11 @@ export default async function Header() {
           </Link>
           {userEmail ? (
             <form action={signOut} className="flex items-center gap-4">
+              {author && (
+                <Link href="/admin" className="text-saffron hover:underline">
+                  Author studio
+                </Link>
+              )}
               <Link href="/profile" className="text-muted hover:text-ink">
                 My learning
               </Link>

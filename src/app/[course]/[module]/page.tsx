@@ -3,19 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { Course, Module } from "@/lib/supabase/types";
+import { youtubeEmbedUrl } from "@/lib/youtube";
 import { completeModule } from "./actions";
-
-function youtubeEmbedUrl(url: string) {
-  try {
-    const u = new URL(url);
-    const id = u.hostname === "youtu.be" ? u.pathname.slice(1) : u.searchParams.get("v");
-    if (!id) return null;
-    const start = parseInt(u.searchParams.get("t") ?? "", 10);
-    return `https://www.youtube-nocookie.com/embed/${id}${start > 0 ? `?start=${start}` : ""}`;
-  } catch {
-    return null;
-  }
-}
 
 // Body is plain text: blank line = new block; "## " heading, "> " verse, "- " list.
 function Body({ text }: { text: string }) {
@@ -84,6 +73,7 @@ export default async function ModulePage({
     .select("id, title, content_type, video_url, body, display_order")
     .eq("course_id", course.id)
     .order("display_order")
+    .order("created_at")
     .returns<Module[]>();
 
   const module = modules?.[number - 1];
