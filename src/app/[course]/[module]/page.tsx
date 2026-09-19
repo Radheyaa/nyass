@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { Course, Module } from "@/lib/supabase/types";
+import { completeModule } from "./actions";
 
 function youtubeEmbedUrl(url: string) {
   try {
@@ -91,6 +92,14 @@ export default async function ModulePage({
   const embedUrl = module.video_url ? youtubeEmbedUrl(module.video_url) : null;
   const total = modules!.length;
 
+  const { data: progress } = await supabase
+    .from("module_progress")
+    .select("completed_at")
+    .eq("user_id", user.id)
+    .eq("module_id", module.id)
+    .maybeSingle<{ completed_at: string | null }>();
+  const done = Boolean(progress?.completed_at);
+
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <Link href={`/${slug}`} className="text-sm text-muted hover:text-ink">
@@ -120,7 +129,21 @@ export default async function ModulePage({
         </div>
       )}
 
-      <nav className="mt-14 flex justify-between border-t border-line pt-6 text-sm">
+      <div className="mt-12">
+        {done ? (
+          <p className="inline-flex items-center gap-2 rounded-full border border-gold/60 px-5 py-2 text-sm font-medium text-saffron">
+            <span aria-hidden>✓</span> Module completed
+          </p>
+        ) : (
+          <form action={completeModule.bind(null, module.id, slug, moduleSlug)}>
+            <button type="submit" className="btn btn-primary">
+              Mark module as complete
+            </button>
+          </form>
+        )}
+      </div>
+
+      <nav className="mt-10 flex justify-between border-t border-line pt-6 text-sm">
         {number > 1 ? (
           <Link href={`/${slug}/module-${number - 1}`} className="text-saffron hover:underline">
             ← Previous module

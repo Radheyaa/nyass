@@ -40,8 +40,10 @@ export default async function Header() {
             Courses
           </Link>
           {userEmail ? (
-            <form action={signOut} className="flex items-center gap-3">
-              <span className="hidden text-muted md:inline">{userEmail}</span>
+            <form action={signOut} className="flex items-center gap-4">
+              <Link href="/profile" className="text-muted hover:text-ink">
+                My learning
+              </Link>
               <button type="submit" className="btn btn-outline btn-sm">
                 Sign out
               </button>

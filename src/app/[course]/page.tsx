@@ -34,6 +34,17 @@ export default async function CoursePage({
     .order("display_order")
     .returns<Module[]>();
 
+  let completed = new Set<string>();
+  if (user && modules && modules.length > 0) {
+    const { data } = await supabase
+      .from("module_progress")
+      .select("module_id")
+      .eq("user_id", user.id)
+      .in("module_id", modules.map((m) => m.id))
+      .returns<{ module_id: string }[]>();
+    completed = new Set(data?.map((row) => row.module_id));
+  }
+
   let enrollment: Enrollment | null = null;
   if (user) {
     const { data } = await supabase
@@ -72,6 +83,11 @@ export default async function CoursePage({
                 Enrolled · {enrollment.status}
               </p>
             )}
+            {user && modules && modules.length > 0 && (
+              <p className="mt-4 text-sm text-paper/70">
+                {completed.size} of {modules.length} modules complete
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -94,7 +110,15 @@ export default async function CoursePage({
                   href={`/${slug}/module-${index + 1}`}
                   className="group flex items-center gap-4 rounded-xl border border-line bg-white/60 px-5 py-4 transition hover:border-gold hover:shadow-sm"
                 >
-                  <span className="w-8 font-display text-xl text-gold">{index + 1}</span>
+                  <span className="w-8 font-display text-xl text-gold">
+                    {completed.has(module.id) ? (
+                      <span className="text-saffron" role="img" aria-label="Completed">
+                        ✓
+                      </span>
+                    ) : (
+                      index + 1
+                    )}
+                  </span>
                   <span className="flex-1">{module.title}</span>
                   <span className="text-xs uppercase tracking-wider text-muted">
                     {module.content_type === "video" ? "Video" : "Reading"}
