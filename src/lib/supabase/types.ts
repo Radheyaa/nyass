@@ -16,6 +16,13 @@ export type Module = {
   display_order: number;
 };
 
+export type AdminUser = {
+  user_id: string;
+  email: string;
+  created_at: string;
+  role: "author" | "admin" | null;
+};
+
 export type Enrollment = {
   status: "interested" | "active" | "completed";
 };

@@ -1,10 +1,14 @@
 import Link from "next/link";
-import { requireAuthor } from "@/lib/auth";
+import { getRole, requireAuthor } from "@/lib/auth";
 
 export const metadata = { title: "Author studio" };
 
 export default async function AdminPage() {
   const supabase = await requireAuthor("/admin");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isAdmin = user ? (await getRole(supabase, user.id)) === "admin" : false;
 
   const { data: courses } = await supabase
     .from("courses")
@@ -15,7 +19,14 @@ export default async function AdminPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-14">
       <p className="text-xs uppercase tracking-[0.3em] text-saffron">Author studio</p>
-      <h1 className="mt-3 font-display text-4xl">Courses</h1>
+      <div className="mt-3 flex items-end justify-between gap-4">
+        <h1 className="font-display text-4xl">Courses</h1>
+        {isAdmin && (
+          <Link href="/admin/learners" className="btn btn-outline btn-sm">
+            Manage learners →
+          </Link>
+        )}
+      </div>
       <p className="mt-2 text-muted">Choose a course to edit its description or build its modules.</p>
 
       <ul className="mt-10 space-y-3">
