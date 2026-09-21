@@ -1,49 +1,50 @@
 import Link from "next/link";
-import { getRole, requireAuthor } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 
-export const metadata = { title: "Author studio" };
+export const metadata = { title: "Admin" };
+
+const tools = [
+  {
+    href: "/admin/learners",
+    title: "Learners",
+    description:
+      "Search learners, see their progress, mark modules complete or incomplete, change enrollment status, and set roles.",
+  },
+];
 
 export default async function AdminPage() {
-  const supabase = await requireAuthor("/admin");
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const isAdmin = user ? (await getRole(supabase, user.id)) === "admin" : false;
-
-  const { data: courses } = await supabase
-    .from("courses")
-    .select("slug, title, modules(id)")
-    .order("display_order")
-    .returns<{ slug: string; title: string; modules: { id: string }[] }[]>();
+  await requireAdmin("/admin");
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-14">
-      <p className="text-xs uppercase tracking-[0.3em] text-saffron">Author studio</p>
-      <div className="mt-3 flex items-end justify-between gap-4">
-        <h1 className="font-display text-4xl">Courses</h1>
-        {isAdmin && (
-          <Link href="/admin/learners" className="btn btn-outline btn-sm">
-            Manage learners →
-          </Link>
-        )}
-      </div>
-      <p className="mt-2 text-muted">Choose a course to edit its description or build its modules.</p>
+      <p className="text-xs uppercase tracking-[0.3em] text-saffron">Admin</p>
+      <h1 className="mt-3 font-display text-4xl">Administration</h1>
+      <p className="mt-2 text-muted">Tools for managing learners and the people who build the courses.</p>
 
-      <ul className="mt-10 space-y-3">
-        {courses?.map((course) => (
-          <li key={course.slug}>
+      <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+        {tools.map((tool) => (
+          <li key={tool.href}>
             <Link
-              href={`/admin/${course.slug}`}
-              className="flex items-center justify-between rounded-xl border border-line bg-white/60 px-5 py-4 transition hover:border-gold hover:shadow-sm"
+              href={tool.href}
+              className="group flex h-full flex-col rounded-2xl border border-line bg-white/60 p-6 transition hover:-translate-y-1 hover:border-gold hover:shadow-lg"
             >
-              <span className="font-display text-xl">{course.title}</span>
-              <span className="text-sm text-muted">
-                {course.modules.length} {course.modules.length === 1 ? "module" : "modules"}
+              <h2 className="font-display text-2xl">{tool.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-muted">{tool.description}</p>
+              <span className="mt-auto pt-5 text-sm font-medium text-saffron">
+                Open <span className="inline-block transition group-hover:translate-x-1">→</span>
               </span>
             </Link>
           </li>
         ))}
       </ul>
+
+      <p className="mt-10 text-sm text-muted">
+        Building courses and modules?{" "}
+        <Link href="/author" className="text-saffron hover:underline">
+          Open the Author studio
+        </Link>
+        .
+      </p>
     </main>
   );
 }

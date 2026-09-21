@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { isAuthor } from "@/lib/auth";
+import { getRole, type Role } from "@/lib/auth";
 import { signOut } from "@/app/login/actions";
 
 export default async function Header() {
   let userEmail: string | null = null;
-  let author = false;
+  let role: Role | null = null;
 
   if (isSupabaseConfigured) {
     const supabase = await createClient();
@@ -14,7 +14,7 @@ export default async function Header() {
       data: { user },
     } = await supabase.auth.getUser();
     userEmail = user?.email ?? null;
-    if (user) author = await isAuthor(supabase, user.id);
+    if (user) role = await getRole(supabase, user.id);
   }
 
   return (
@@ -43,10 +43,15 @@ export default async function Header() {
             Courses
           </Link>
           {userEmail ? (
-            <form action={signOut} className="flex items-center gap-4">
-              {author && (
-                <Link href="/admin" className="text-saffron hover:underline">
+            <form action={signOut} className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+              {role && (
+                <Link href="/author" className="text-saffron hover:underline">
                   Author studio
+                </Link>
+              )}
+              {role === "admin" && (
+                <Link href="/admin" className="text-saffron hover:underline">
+                  Admin
                 </Link>
               )}
               <Link href="/profile" className="text-muted hover:text-ink">

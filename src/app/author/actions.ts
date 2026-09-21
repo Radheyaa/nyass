@@ -11,12 +11,12 @@ const withError = (path: string, message: string) =>
   `${path}?error=${encodeURIComponent(message)}`;
 
 export async function saveCourse(courseId: string, slug: string, formData: FormData) {
-  const supabase = await requireAuthor(`/admin/${slug}`);
+  const supabase = await requireAuthor(`/author/${slug}`);
   const { error } = await supabase
     .from("courses")
     .update({ title: text(formData, "title"), description: text(formData, "description") || null })
     .eq("id", courseId);
-  redirect(error ? withError(`/admin/${slug}`, error.message) : `/admin/${slug}?saved=1`);
+  redirect(error ? withError(`/author/${slug}`, error.message) : `/author/${slug}?saved=1`);
 }
 
 // moduleId is a module uuid, or "new" to create one.
@@ -26,8 +26,8 @@ export async function saveModule(
   moduleId: string,
   formData: FormData,
 ) {
-  const supabase = await requireAuthor(`/admin/${slug}`);
-  const back = `/admin/${slug}/${moduleId}`;
+  const supabase = await requireAuthor(`/author/${slug}`);
+  const back = `/author/${slug}/${moduleId}`;
 
   const videoUrl = text(formData, "video_url");
   if (videoUrl && !youtubeEmbedUrl(videoUrl)) {
@@ -49,11 +49,11 @@ export async function saveModule(
       : await supabase.from("modules").update(fields).eq("id", moduleId).select("id").single();
 
   if (error || !data) redirect(withError(back, error?.message ?? "Save failed."));
-  redirect(`/admin/${slug}/${data.id}?saved=1`);
+  redirect(`/author/${slug}/${data.id}?saved=1`);
 }
 
 export async function deleteModule(slug: string, moduleId: string) {
-  const supabase = await requireAuthor(`/admin/${slug}`);
+  const supabase = await requireAuthor(`/author/${slug}`);
   const { error } = await supabase.from("modules").delete().eq("id", moduleId);
-  redirect(error ? withError(`/admin/${slug}/${moduleId}`, error.message) : `/admin/${slug}`);
+  redirect(error ? withError(`/author/${slug}/${moduleId}`, error.message) : `/author/${slug}`);
 }

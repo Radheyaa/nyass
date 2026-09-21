@@ -19,7 +19,7 @@ export default async function LearnersPage({
   return (
     <main className="mx-auto max-w-3xl px-6 py-14">
       <Link href="/admin" className="text-sm text-muted hover:text-ink">
-        ← Author studio
+        ← Admin
       </Link>
       <p className="mt-6 text-xs uppercase tracking-[0.3em] text-saffron">Admin</p>
       <h1 className="mt-3 font-display text-4xl">Learners</h1>

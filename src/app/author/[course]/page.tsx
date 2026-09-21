@@ -14,7 +14,7 @@ export default async function AdminCoursePage({
 }) {
   const { course: slug } = await params;
   const { error, saved } = await searchParams;
-  const supabase = await requireAuthor(`/admin/${slug}`);
+  const supabase = await requireAuthor(`/author/${slug}`);
 
   const { data: course } = await supabase
     .from("courses")
@@ -33,7 +33,7 @@ export default async function AdminCoursePage({
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-14">
-      <Link href="/admin" className="text-sm text-muted hover:text-ink">
+      <Link href="/author" className="text-sm text-muted hover:text-ink">
         ← All courses
       </Link>
       <div className="mt-6 flex items-end justify-between gap-4">
@@ -68,7 +68,7 @@ export default async function AdminCoursePage({
 
       <div className="mt-14 flex items-center justify-between">
         <h2 className="font-display text-2xl">Modules</h2>
-        <Link href={`/admin/${slug}/new`} className="btn btn-primary btn-sm">
+        <Link href={`/author/${slug}/new`} className="btn btn-primary btn-sm">
           Add module
         </Link>
       </div>
@@ -81,7 +81,7 @@ export default async function AdminCoursePage({
               className="flex items-center gap-4 rounded-xl border border-line bg-white/60 px-5 py-4"
             >
               <span className="w-6 font-display text-xl text-gold">{index + 1}</span>
-              <Link href={`/admin/${slug}/${module.id}`} className="flex-1 hover:text-saffron">
+              <Link href={`/author/${slug}/${module.id}`} className="flex-1 hover:text-saffron">
                 {module.title}
               </Link>
               <span

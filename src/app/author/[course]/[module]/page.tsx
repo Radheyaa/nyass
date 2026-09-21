@@ -14,7 +14,7 @@ export default async function AdminModulePage({
 }) {
   const { course: slug, module: moduleId } = await params;
   const { error, saved } = await searchParams;
-  const supabase = await requireAuthor(`/admin/${slug}/${moduleId}`);
+  const supabase = await requireAuthor(`/author/${slug}/${moduleId}`);
 
   const { data: course } = await supabase
     .from("courses")
@@ -49,7 +49,7 @@ export default async function AdminModulePage({
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-14">
-      <Link href={`/admin/${slug}`} className="text-sm text-muted hover:text-ink">
+      <Link href={`/author/${slug}`} className="text-sm text-muted hover:text-ink">
         ← {course.title}
       </Link>
       <h1 className="mt-6 font-display text-4xl">{isNew ? "New module" : "Edit module"}</h1>
