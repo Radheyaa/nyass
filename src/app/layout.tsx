@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Fraunces, Geist, Noto_Serif_Devanagari } from "next/font/google";
 import Header from "@/components/Header";
 import "./globals.css";
@@ -41,6 +42,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             The Universal Wisdom Academy
           </p>
           <p className="mt-1">Wisdom Without Borders</p>
+          <Link href="/privacy" className="mt-3 inline-block hover:text-ink hover:underline">
+            Privacy Policy
+          </Link>
         </footer>
       </body>
     </html>
